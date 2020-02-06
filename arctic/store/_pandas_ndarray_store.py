@@ -3,7 +3,7 @@ import logging
 
 import numpy as np
 from bson.binary import Binary
-from pandas import DataFrame, Series, Panel
+from pandas import DataFrame, Series
 
 from arctic._util import NP_OBJECT_DTYPE
 from arctic.serialization.numpy_records import SeriesSerializer, DataFrameSerializer
@@ -211,9 +211,9 @@ class PandasDataFrameStore(PandasStore):
 class PandasPanelStore(PandasDataFrameStore):
     TYPE = 'pandaspan'
 
-    @staticmethod
-    def can_write_type(data):
-        return isinstance(data, Panel)
+    # @staticmethod
+    # def can_write_type(data):
+    #     return isinstance(data, Panel)
 
     def can_write(self, version, symbol, data):
         if self.can_write_type(data):
