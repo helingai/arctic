@@ -352,7 +352,7 @@ class TickStore(object):
 
         t = (dt.now() - perf_start).total_seconds()
         logger.info("Got data in %s secs, creating DataFrame..." % t)
-        mgr = _arrays_to_mgr(arrays, columns, index, columns, dtype=None)
+        mgr = _arrays_to_mgr(arrays, columns, index, columns, dtype=None, typ='array')
         rtn = pd.DataFrame(mgr)
         # Present data in the user's default TimeZone
         rtn.index = rtn.index.tz_convert(mktz())
@@ -415,7 +415,7 @@ class TickStore(object):
         existing_dtype = column_dtypes.get(c)
         if existing_dtype is None or existing_dtype != dtype:
             # Promote ints to floats - as we can't easily represent NaNs
-            if np.issubdtype(dtype, int):
+            if np.issubdtype(dtype, np.signedinteger) or np.issubdtype(dtype, np.unsignedinteger):
                 dtype = np.dtype('f8')
             column_dtypes[c] = np.promote_types(column_dtypes.get(c, dtype), dtype)
 
@@ -706,7 +706,7 @@ class TickStore(object):
         rowmask = Binary(lz4_compressHC(np.packbits(np.ones(len(df), dtype='uint8')).tostring()))
 
         index_name = df.index.names[0] or "index"
-        recs = df.to_records(convert_datetime64=False)
+        recs = df.to_records()
         for col in df:
             array = TickStore._ensure_supported_dtypes(recs[col])
             col_data = {
