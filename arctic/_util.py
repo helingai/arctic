@@ -22,7 +22,7 @@ def get_fwptr_config(version):
 def _detect_new_count_api():
     try:
         mongo_v = [int(v) for v in pymongo.version.split('.')]
-        return mongo_v[0] >= 3 and mongo_v[1] >= 7
+        return (mongo_v[0] >= 3 and mongo_v[1] >= 7) or (mongo_v[0] >= 4)
     except:
         return False
 
