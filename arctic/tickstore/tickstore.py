@@ -717,7 +717,7 @@ class TickStore(object):
             rtn[COLUMNS][col] = col_data
         rtn[INDEX] = Binary(
             lz4_compressHC(np.concatenate(
-                ([recs[index_name][0].astype('datetime64[ms]').view('uint64')],
+                ([recs[index_name][0].to_numpy().astype('datetime64[ms]').view('uint64')],
                  np.diff(
                      recs[index_name].astype('datetime64[ms]').view('uint64')))).tostring()))
         return rtn, final_image
