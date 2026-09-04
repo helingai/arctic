@@ -55,7 +55,7 @@ class PandasStore(NdarrayStore):
                 if start > 0:
                     existing_index_arr = existing_index_arr[existing_index_arr['index'] < start]
                 index = np.concatenate((existing_index_arr, index))
-            return Binary(compress(index.tostring()))
+            return Binary(compress(index.tobytes()))
         elif existing_index:
             raise ArcticException("Could not find datetime64 index in item but existing data contains one")
         return None
@@ -224,7 +224,7 @@ class PandasPanelStore(PandasDataFrameStore):
         return False
 
     def write(self, arctic_lib, version, symbol, item, previous_version):
-        if np.product(item.shape) == 0:
+        if np.prod(item.shape) == 0:
             # Currently not supporting zero size panels as they drop indices when converting to dataframes
             # Plan is to find a better solution in due course.
             raise ValueError('Cannot insert a zero size panel into mongo.')
