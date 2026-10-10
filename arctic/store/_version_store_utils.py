@@ -143,7 +143,14 @@ def _define_compat_pickle_load():
     """
     if pd.__version__.startswith("0.14"):
         return pickle.load
-    return pickle_compat.load
+    if hasattr(pickle_compat, 'load'):
+        return pickle_compat.load
+
+    # pandas >= 2.2 removed pickle_compat.load; build the equivalent from its Unpickler.
+    def _load(fh, encoding='ASCII'):
+        return pickle_compat.Unpickler(fh, encoding=encoding).load()
+
+    return _load
 
 
 def analyze_symbol(l, sym, from_ver, to_ver, do_reads=False):
